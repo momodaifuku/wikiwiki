@@ -7,8 +7,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2, Lightbulb, ArrowRight, X } from 'lucide-react';
 
 export const WikiViewer = () => {
-  const { currentTitle, goalTitle, difficulty, steps, moveTo, status } = useGameStore();
+  const { currentTitle, goalTitle, difficulty, steps, searchQuery, moveTo, status } = useGameStore();
   const [html, setHtml] = useState<string>('');
+  const [highlightedHtml, setHighlightedHtml] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [hints, setHints] = useState<string[]>([]);
   const [showHint, setShowHint] = useState(false);
@@ -73,6 +74,42 @@ export const WikiViewer = () => {
       console.error('Failed to load hints', error);
     }
   };
+
+  useEffect(() => {
+    if (!html) return;
+    
+    if (!searchQuery || searchQuery.length < 1) {
+      setHighlightedHtml(html);
+      return;
+    }
+
+    try {
+      // Escape regex special characters
+      const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(`(${escapedQuery})`, 'gi');
+      
+      // We need to be careful not to replace text inside HTML tags
+      // A simple way is to use a temporary div to traverse text nodes, 
+      // but string replacement with a smart regex is often enough for simple wiki content.
+      // Better approach: use a regex that ignores tags
+      const highlighted = html.replace(/(>[^<]+<)/g, (match) => {
+        return match.replace(regex, '<mark class="search-highlight">$1</mark>');
+      });
+      
+      setHighlightedHtml(highlighted);
+
+      // Scroll to first match after a short delay
+      setTimeout(() => {
+        const firstMatch = document.querySelector('.search-highlight');
+        if (firstMatch) {
+          firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
+    } catch (e) {
+      console.error('Highlight failed', e);
+      setHighlightedHtml(html);
+    }
+  }, [html, searchQuery]);
 
   const loadArticle = async (title: string) => {
     setLoading(true);
@@ -143,7 +180,7 @@ export const WikiViewer = () => {
             </h1>
             <div 
               className="wiki-content"
-              dangerouslySetInnerHTML={{ __html: html }}
+              dangerouslySetInnerHTML={{ __html: highlightedHtml || html }}
               onClick={handleLinkClick}
             />
           </motion.div>

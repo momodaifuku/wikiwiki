@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { useGameStore } from '@/store/useGameStore';
-import { Trophy, Timer, MousePointer2, LogOut, Undo2, Flag } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Trophy, Timer, MousePointer2, LogOut, Undo2, Flag, Info, Search, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export const Navbar = () => {
-  const { goalTitle, steps, startTime, status, history, resetGame, goBack, giveUp } = useGameStore();
+  const { goalTitle, goalSummary, steps, startTime, status, history, searchQuery, setSearchQuery, resetGame, goBack, giveUp } = useGameStore();
   const [elapsed, setElapsed] = useState(0);
+  const [showInfo, setShowInfo] = useState(false);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -39,7 +40,29 @@ export const Navbar = () => {
             <Trophy className="w-5 h-5 text-yellow-400" />
             <div className="flex flex-col">
               <span className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Goal</span>
-              <span className="font-bold text-sm lg:text-base">{goalTitle}</span>
+              <div className="flex items-center gap-2 relative">
+                <span className="font-bold text-sm lg:text-base">{goalTitle}</span>
+                <button 
+                  onMouseEnter={() => setShowInfo(true)}
+                  onMouseLeave={() => setShowInfo(false)}
+                  className="text-blue-400 hover:text-blue-300 transition-colors"
+                >
+                  <Info className="w-3.5 h-3.5" />
+                </button>
+
+                <AnimatePresence>
+                  {showInfo && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      className="absolute top-full left-0 mt-2 w-64 p-4 glass-card bg-[#1a1a1e] backdrop-blur-xl text-xs leading-relaxed shadow-2xl z-[60] border-blue-500/30"
+                    >
+                      <p className="text-gray-300 font-medium">{goalSummary}</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
           </div>
           
@@ -58,6 +81,22 @@ export const Navbar = () => {
                 <span className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Time</span>
                 <span className="font-mono font-bold">{formatTime(elapsed)}</span>
               </div>
+            </div>
+            
+            <div className="flex items-center gap-2 px-3 py-1 bg-white/5 rounded-lg border border-white/5 focus-within:border-primary/50 transition-all ml-2">
+              <Search className="w-3.5 h-3.5 text-gray-500" />
+              <input 
+                type="text"
+                placeholder="ページ内を検索..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="bg-transparent border-none outline-none text-xs w-24 lg:w-32 placeholder:text-gray-600"
+              />
+              {searchQuery && (
+                <button onClick={() => setSearchQuery('')} className="text-gray-500 hover:text-white">
+                  <X className="w-3 h-3" />
+                </button>
+              )}
             </div>
           </div>
         </div>

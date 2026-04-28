@@ -128,13 +128,30 @@ export const ResultCard = () => {
                       <Loader2 className="w-4 h-4 animate-spin" /> 最短ルートを計算中...
                     </div>
                   ) : (
-                    <div className="flex flex-wrap items-center gap-2">
+                    <div className="grid gap-3">
                       {solutionPath.map((title, i) => (
-                        <div key={i} className="flex items-center gap-2">
-                          <span className="px-3 py-1.5 rounded-lg text-sm font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                            {title}
-                          </span>
-                          {i < solutionPath.length - 1 && <ArrowRight className="w-4 h-4 text-gray-600" />}
+                        <div key={i} className="flex items-center gap-4 group">
+                          <div className="flex flex-col items-center">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-colors ${
+                              i === 0 ? 'bg-primary/20 border-primary text-primary' :
+                              i === solutionPath.length - 1 ? 'bg-secondary/20 border-secondary text-secondary' :
+                              'bg-white/5 border-white/10 text-gray-400'
+                            }`}>
+                              {i + 1}
+                            </div>
+                            {i < solutionPath.length - 1 && (
+                              <div className="w-0.5 h-4 bg-white/5 my-1" />
+                            )}
+                          </div>
+                          <div className={`flex-1 p-3 rounded-xl border transition-all ${
+                            i === 0 ? 'bg-primary/5 border-primary/20' :
+                            i === solutionPath.length - 1 ? 'bg-secondary/5 border-secondary/20' :
+                            'bg-white/5 border-white/5'
+                          }`}>
+                            <span className="text-sm font-bold">{title}</span>
+                            {i === 0 && <span className="ml-2 text-[10px] text-primary/60 uppercase">Start</span>}
+                            {i === solutionPath.length - 1 && <span className="ml-2 text-[10px] text-secondary/60 uppercase">Goal</span>}
+                          </div>
                         </div>
                       ))}
                     </div>

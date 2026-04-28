@@ -4,7 +4,9 @@ interface GameState {
   status: 'idle' | 'playing' | 'result';
   startTitle: string;
   goalTitle: string;
+  goalSummary: string;
   currentTitle: string;
+  searchQuery: string;
   history: string[];
   steps: number;
   startTime: number | null;
@@ -12,7 +14,8 @@ interface GameState {
   difficulty: 'easy' | 'normal' | 'hard';
   
   // Actions
-  startGame: (start: string, goal: string, difficulty: 'easy' | 'normal' | 'hard') => void;
+  startGame: (start: string, goal: string, summary: string, difficulty: 'easy' | 'normal' | 'hard') => void;
+  setSearchQuery: (query: string) => void;
   moveTo: (title: string) => void;
   goBack: () => void;
   giveUp: () => void;
@@ -24,17 +27,20 @@ export const useGameStore = create<GameState>((set) => ({
   status: 'idle',
   startTitle: '',
   goalTitle: '',
+  goalSummary: '',
   currentTitle: '',
+  searchQuery: '',
   history: [],
   steps: 0,
   startTime: null,
   endTime: null,
   difficulty: 'normal',
 
-  startGame: (start, goal, difficulty) => set({
+  startGame: (start, goal, summary, difficulty) => set({
     status: 'playing',
     startTitle: start,
     goalTitle: goal,
+    goalSummary: summary,
     currentTitle: start,
     history: [start],
     steps: 0,
@@ -42,6 +48,8 @@ export const useGameStore = create<GameState>((set) => ({
     endTime: null,
     difficulty,
   }),
+
+  setSearchQuery: (query) => set({ searchQuery: query }),
 
   moveTo: (title) => set((state) => {
     if (state.status !== 'playing') return state;
@@ -90,7 +98,9 @@ export const useGameStore = create<GameState>((set) => ({
     status: 'idle',
     startTitle: '',
     goalTitle: '',
+    goalSummary: '',
     currentTitle: '',
+    searchQuery: '',
     history: [],
     steps: 0,
     startTime: null,
