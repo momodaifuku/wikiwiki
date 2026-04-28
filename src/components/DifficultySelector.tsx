@@ -29,9 +29,9 @@ export const DifficultySelector = () => {
   if (status !== 'idle') return null;
 
   const levels = [
-    { id: 'easy', label: 'Easy', icon: Zap, color: 'text-green-400', desc: 'Short articles, many links' },
-    { id: 'normal', label: 'Normal', icon: Brain, color: 'text-blue-400', desc: 'Standard Wikipedia racing' },
-    { id: 'hard', label: 'Hard', icon: ShieldAlert, color: 'text-red-400', desc: 'Niche topics, obscure paths' },
+    { id: 'easy', label: '初級', icon: Zap, color: 'text-green-400', desc: '短い記事が多く、リンクが見つかりやすい' },
+    { id: 'normal', label: '中級', icon: Brain, color: 'text-blue-400', desc: '標準的なウィキレースの難易度' },
+    { id: 'hard', label: '上級', icon: ShieldAlert, color: 'text-red-400', desc: 'マニアックな記事が多く、難易度が高い' },
   ] as const;
 
   return (
@@ -49,12 +49,12 @@ export const DifficultySelector = () => {
           WIKI RACE
         </motion.h1>
         <p className="text-gray-400 mb-10 text-lg">
-          Unleash your knowledge. Find the shortest path between two random worlds.
+          知の繋がりを駆け抜けろ。<br />2つのランダムな記事を繋ぐ最短経路を見つけ出そう。
         </p>
 
         <div className="mb-10 text-left max-w-sm mx-auto">
           <h3 className="text-sm uppercase tracking-widest text-gray-500 font-bold mb-4 flex items-center gap-2">
-            <Zap className="w-4 h-4" /> Difficulty
+            <Zap className="w-4 h-4" /> 難易度を選択
           </h3>
           <div className="space-y-3">
             {levels.map((level) => (
@@ -90,11 +90,14 @@ export const DifficultySelector = () => {
           className="w-full py-5 rounded-2xl bg-primary hover:bg-primary/90 text-white font-black text-xl flex items-center justify-center gap-3 transition-all active:scale-[0.98] disabled:opacity-50"
         >
           {loading ? (
-            <Loader2 className="w-6 h-6 animate-spin" />
+            <>
+              <Loader2 className="w-6 h-6 animate-spin" />
+              <span>お題を生成中...</span>
+            </>
           ) : (
             <>
               <Play className="w-6 h-6 fill-current" />
-              START RACE
+              <span>レース開始</span>
             </>
           )}
         </button>
